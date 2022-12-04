@@ -193,7 +193,7 @@ Options for change the fonts:
 
 ### Configuration file `mkdocs.yml`
 
-The default configuration file includes several recommendations which can be changed generation.
+The default configuration file includes several recommendations which can be changed.
 
 - Extra logo in the header `logo:` and a link to the main project `homepage:`.
 - own style sheet `extra.css` for your own modifications, like font colors
