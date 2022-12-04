@@ -40,11 +40,11 @@ documentation of any kind.
 <!-- ABOUT THE PROJECT -->
 ## About the Project
 
-This project is based on `mkdocs-material` template using:
+This project is based on `mkdocs-material` template.
     
 With this template build you can start either building your project documentation or workshop.
-Besides initializing the git repo it enables you to to generate locally or directly on gitlab 
-or github your template.
+Besides initializing the git repo it enables you to to generate a local instance or directly a website on GitLab 
+or GitHub your template.
 
 
 <!-- GETTING STARTED -->
@@ -264,7 +264,7 @@ nav:
 
 - Local: `$ poetry run mkdocs serve`
 - GitLab: `$ git push` after adding your remote GitLab url
-- Github: `$ poetry run mkdocs gh-deploy` after adding your remote Github url
+- GitHub: `$ poetry run mkdocs gh-deploy` after adding your remote GitHub url
 
 <!-- CONTRIBUTING -->
 ## Contributing
