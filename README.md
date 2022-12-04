@@ -97,6 +97,16 @@ You need the following command line tools installed
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+If you want to quickly set up a web site for your project or workshop you can use this script for a quick setup:
+
+~~~
+$generate_mkdocs [OPTIONS]
+~~~
+
+For more informations you can use the `--help` option.
+
+-----
+
 This script generates a poetry environment in the folder you generated your project. 
 It installs `mkdocs`, `mkdocs-material` and `reuse` and downloads and generates several files 
 in order to start your project right away.
