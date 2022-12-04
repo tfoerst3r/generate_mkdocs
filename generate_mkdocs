@@ -1,0 +1,388 @@
+#!/bin/bash
+# SPDX-FileCopyrightText: Copyright (c) 2022 Thomas Foerster
+# SPDX-License-Identifier: CC0-1.0 
+
+#: Title       : generate_mkdocs
+#: Date        : 2022-11-30
+#: Author      : Thomas Foerster
+#: Version     : 0.1
+#: Description : Generates basic mkdocs project
+#: Note        : Put this file in your PATH variable and make it executable.
+
+#------------------#
+
+#----------------------------#
+#----- Default Settings -----#
+#----------------------------#
+
+MAINFOLDER=materials
+THEMEFOLDER=custom_theme
+CODELICENSE="MIT"
+TEXTLICENSE="CC-BY-4.0"
+Font_Text="https://fonts.gstatic.com/s/notosans/v27/o-0IIpQlx3QUlC5A4PNr6zRAW_0.woff2"
+Font_Mono="https://fonts.gstatic.com/s/notosansmono/v21/BngrUXNETWXI6LwhGYvaxZikqZqK6fBq6kPvUce2oAZcdthSBUsYck4-_FNJ09PdVXQQ.woff2"
+
+#----------------------------#
+#----- Script Functions -----#
+#----------------------------#
+
+function die() {
+    local scrname=$(basename "$0")
+    echo "$scrname: $1" >&2
+    exit 1
+}
+
+#---------------------#
+
+function msg() {
+    local scrname=$(basename "$0")
+    echo "$scrname: $1" >&2
+}
+
+#---------------------#
+
+function msg_noarg() {
+    echo "-----------------------------"
+    echo "-- Nothing was done! --------"
+    echo "-- No arguments are given! --"
+    echo "-----------------------------"
+}
+
+#---------------------#
+
+trap 'die "Execution aborted."' 1 2 3 9 15
+
+#---------------------#
+
+function printhelp() {
+cat <<-EOM
+
+Usage: project [OPTION] 
+Generates the basic project template for a mkdocs based documentation page
+
+Requirements:
+  - > python 3.9
+  - > poetry 1.2
+
+Example of usage:
+  generate_mkdocs
+
+OPTIONS:
+-h   --help               print help message and exit
+     --mainfolder   ARGS  name of the page material folder, default 'material'
+     --themefolder  ARGS  name of the folder for the custom css file/s, default 'custom_theme'
+     --codelicense  ARGS  abbrivation of the license for the code parts based on the reuse definition, default 'MIT'
+     --textlicense  ARGS  abbrivation of the license for the text parts based on the reuse definition, default 'CC-BY-4.0'
+     --font_text    ARGS  link to the a text font, default font name Noto Sans, default link to the google woff2 file
+     --font_mono    ARGS  link to the a code font, default font name Noto Sans Mono, default link to the google woff2 file
+
+DESCRIPTION:
+  generates a basic mkdocs instance which directly can be deployed to either gitlab or github
+
+  LOCAL: 
+    To start a local web server use:\n\n\$ poetry run mkdocs serve\n"
+  GITLAB: 
+    To generate a gitlab page push the repo to your remote gitlab repo, the CI pipeline will do the rest
+  GITHUB:
+    - use '$ poetry run mkdocs gh-deploy' and push the repo to your remote github repo
+
+EOM
+}
+
+#---------------------#
+
+MAINFOLDER=materials
+THEMEFOLDER=custom_theme
+CODELICENSE="MIT"
+TEXTLICENSE="CC-BY-4.0"
+Font_Text="https://fonts.gstatic.com/s/notosans/v27/o-0IIpQlx3QUlC5A4PNr6zRAW_0.woff2"
+Font_Mono="https://fonts.gstatic.com/s/notosansmono/v21/BngrUXNETWXI6LwhGYvaxZikqZqK6fBq6kPvUce2oAZcdthSBUsYck4-_FNJ09PdVXQQ.woff2"
+
+
+#-- parse options --#
+while [ -n "$1" ]; do
+    case $1 in
+      -h | --help   ) printhelp && exit 0 ;;
+      --mainfolder  ) MAINFOLDER=$2; shift 2 ;;
+      --themefolder ) THEMEFOLDER=$2; shift 2 ;;
+      --codelicense ) CODELICENSE=$2; shift 2 ;;
+      --textlicense ) TEXTLICENSE=$2; shift 2 ;;
+      --font_text   ) Font_Text=$2; shift 2 ;;
+      --font_mono   ) Font_Mono=$2; shift 2 ;;
+      --            ) shift; break ;;
+      -*            ) msg "unknown option (ignored): $1" && exit 1 ;;
+      *             ) break ;;
+    esac
+done
+
+#------------------#
+#----- Helper -----#
+#------------------#
+
+Font_Text_extension="${Font_Text##*.}"
+Font_Mono_extension="${Font_Mono##*.}"
+
+#------------------#
+
+licenseCC="# License
+
+Copyright (c) 2022 Helmholtz-Zentrum Dresden - Rossendorf (HZDR)
+
+This work is licensed under a [$TEXTLICENSE](LICENSES/$TEXTLICENSE.txt) license.
+
+Code and code examples are licensed under a [$CODELICENSE](LICENSES/$CODELICENSE.txt) license.
+"
+
+#------------------#
+
+poetryconf="#SPDX-FileCopyrightText: Copyright (c) 2022 Helmholtz-Zentrum Dresden - Rossendorf (HZDR)
+# SPDX-License-Identifier: CC0-1.0 
+in-project = true 
+create = true
+"
+
+#------------------#
+
+mkdocsconf="site_name: Documentation
+docs_dir: $MAINFOLDER
+
+theme:
+  font: false
+  name: 'material'
+  sticky-navigation: true
+  custom_dir: $THEMEFOLDER
+  logo: \"https://hifis.net/assets/img/HIFIS_Logo_Inverted_cropped.svg\"
+
+extra:
+  homepage: https://hifis.net  # sets the link of the logo on top
+  generator: false             # disable notics 'Made with Material for MkDocs
+
+extra_css:
+  - css/extra.css
+
+markdown_extensions:
+  - smarty
+  - toc: 
+      baselevel: 1
+      permalink: true
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+nav:
+  - index.md
+  - about.md
+"
+
+
+#------------------#
+
+ignore1="# Created by .ignore support plugin (hsz.mobi)
+/.idea/
+/env/
+/site/
+*.orig
+*.html
+/docs/images/uml/out/
+.DS_Store
+
+# build folder
+public/
+site/
+
+# temporary files
+*.sw?
+"
+
+#------------------#
+
+cipage="image: python:3.9
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  before_script:
+    - pip install -U pip
+    - pip install poetry
+    - poetry install
+  script:
+    - poetry run mkdocs build -d public
+  artifacts:
+    paths:
+      - public
+
+pages:
+  stage: deploy
+  dependencies:
+    - build
+  script:
+    - echo 'Skip script section' 
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+"
+
+#------------------#
+
+copyright_footer="{% block copyright %}
+
+<!-- License Impressum and Privacy Policy -->
+<div>
+  <a 
+    rel=\"license\" 
+    href=\"http://creativecommons.org/licenses/by/4.0/\">
+  </a>
+  Licensed under
+  <a 
+    rel=\"license\" 
+    href=\"http://creativecommons.org/licenses/by/4.0/\">
+    CC-BY-4.0 &nbsp
+    <img 
+      alt=\"Creative Commons License\" 
+      style=\"border-width:0; vertical-align:middle\"
+      src=\"https://i.creativecommons.org/l/by/4.0/88x31.png\"
+    />
+  </a>
+  &nbsp
+  &copy; <?php echo date(\"Yi\"); ?> <a href=\"https://www.hzdr.de\">HZDR</a>
+</div>
+
+<!-- Impressum and Privacy Policy -->
+<div style=\"align:right\">
+  <a href=\"https://www.hzdr.de/db/Cms?pOid=10115&pNid=0\" target=\"_blank\" rel=\"noopener noreferrer\">Imprint</a>
+  |
+  <a href=\"https://www.hzdr.de/db/Cms?pOid=50772&pNid=0\" target=\"_blank\" rel=\"noopener noreferrer\">Privacy Policy</a>
+</div>
+
+{% endblock %}
+"
+
+extra_css="/* add Helmholtz blue as primary colour*/ 
+
+/* #region Mono */
+@font-face {
+  font-family: 'Font_Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  src: url(../fonts/Font_Mono.$Font_Mono_extension) 
+}
+
+/* #region Text */
+@font-face {
+  font-family: 'Font_Text';
+  font-style: normal;
+  font-weight: 400;
+  src: url(../fonts/Font_Text.$Font_Text_extension)
+}
+/* #endregion */
+
+:root {
+    --md-primary-fg-color: #005AA0;
+    --md-text-font: 'Font_Text';
+    --md-code-font: 'Font_Mono';
+} 
+
+div {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.md-typeset h1, .md-typeset h2 {
+    color: #005AA0;
+}
+"
+
+#------------------#
+
+function generate_mkdocs_project {
+  
+  # Local variables, unchangable
+  COPYFILE01=copyright.html
+  EXTRACSS=extra.css
+     
+  #== SETUP and CONFIGURATION ==#
+  #-- Base folder structure --#
+  mkdir -p "$MAINFOLDER/episodes"
+  mkdir -p "$MAINFOLDER/tasks"
+  mkdir -p "$MAINFOLDER/images"
+  mkdir -p "$MAINFOLDER/legal"
+  mkdir -p "$MAINFOLDER/css"
+  mkdir -p "$MAINFOLDER/fonts"
+  mkdir -p "$THEMEFOLDER/partials"
+    
+  #-- Font download --#
+  wget $Font_Text --output-document=$MAINFOLDER/fonts/Font_Text.$Font_Text_extension
+  wget $Font_Mono --output-document=$MAINFOLDER/fonts/Font_Mono.$Font_Mono_extension
+  
+  #-- Base Example Files --#
+  echo -e "---\ntitle: Introduction\n---\n\n# Getting started\n\nHallo world!\n" > "$MAINFOLDER/index.md"
+  echo -e "---\ntitle: About us\n---\n\n# Group\n\n We are a group of ...\n" > "$MAINFOLDER/about.md"
+  touch README.md
+   
+  #-- Base Configuration Files --#
+  echo "$poetryconf" > poetry.toml
+  echo "$mkdocsconf" > mkdocs.yml
+  echo "$ignore1" > .gitignore
+  echo "$cipage" > .gitlab-ci.yml
+  echo "$extra_css" > "$MAINFOLDER/css/$EXTRACSS"
+  
+  #-- Configuration Step --#
+  poetry init --name Workshop --quiet
+  poetry add mkdocs
+  poetry add mkdocs-material
+  poetry add reuse
+  
+  git init
+  git add * .gitignore .gitlab-ci.yml
+  git commit -m "Initial commit"
+  
+  #== LEGAL ==#
+  #-- Copyright Footer
+  echo "$copyright_footer" > "$THEMEFOLDER/partials/$COPYFILE01"
+
+  #-- License
+  echo "$licenseCC" > LICENSE.md
+
+  if [[ -n "$CODELICENSE" ]]; then
+     poetry run reuse download $CODELICENSE 
+  fi
+
+  if [[ -n "$TEXTLICENSE" ]]; then
+     poetry run reuse download $TEXTLICENSE
+  fi
+ 
+  #== Finish remarks ==#
+  echo -e "----\nWorkshop folder structure created!\n----\n"
+
+}
+
+#-----------------------#
+
+function msg_not_empty {
+    echo "-----------------------------------"
+    echo "-- Folder not empty! --------------"
+    echo "-- Project outline NOT generate! --"
+    echo "-----------------------------------"
+}
+
+#-----------------------#
+#----- Main Script -----#
+#-----------------------#
+
+if [ -z "$(ls -A .)" ]; then
+    generate_mkdocs_project
+else
+    msg_not_empty
+    exit 1
+fi
+
