@@ -1,14 +1,4 @@
-
 <a name="readme-top"></a>
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
 
 <!-- PROJECT Title -->
 <h3 align="center">generate_mkdocs</h3>
@@ -53,20 +43,23 @@ or GitHub your template.
 This is an example of how you may give instructions on setting up your project locally.
 To get a local copy up and running follow these simple example steps.
 
+<what does the script do>
+
 ### Prerequisites
 
 You need the following command line tools installed
 
 - python 3.9
 - [poetry 1.2](https://python-poetry.org/)
+- currently tested only for Linux systems
   
 ### Installation
 
 1. Clone the repo
    
-   ``` sh
+   ~~~ sh
    $ git clone git@github.com:tfoerst3r/generate_mkdocs.git
-   ```
+   ~~~
 
 2. Copy this script in a directory which is part of your PATH variable, 
    ex. `$USER/bin/` or `$USER/.local/bin/`. You can check your path variable beforhand,
@@ -80,7 +73,7 @@ You need the following command line tools installed
     $ generate_mkdocs [OPTIONS]
     ```
 
-4. Change add/change your remote git url depending what you use (ssh/https)
+4. Add or change your remote git url depending what you use (ssh/https)
     
     ~~~ sh
     $ git remote set-url origin <your gitlab or github ssh/https url>
@@ -100,7 +93,7 @@ You need the following command line tools installed
 If you want to quickly set up a web site for your project or workshop you can use this script for a quick setup:
 
 ~~~
-$generate_mkdocs [OPTIONS]
+$ generate_mkdocs [OPTIONS]
 ~~~
 
 For more informations you can use the `--help` option.
@@ -251,10 +244,10 @@ Example of
 ~~~
 nav:
   - Documentation:
-        - ch1.md
+        - chapter_01.md
         - ...
   - Exercises:
-        - ex1.md
+        - example_01.md
         - ...
 ~~~
 

@@ -22,9 +22,9 @@ TEXTLICENSE="CC-BY-4.0"
 Font_Text="https://fonts.gstatic.com/s/notosans/v27/o-0IIpQlx3QUlC5A4PNr6zRAW_0.woff2"
 Font_Mono="https://fonts.gstatic.com/s/notosansmono/v21/BngrUXNETWXI6LwhGYvaxZikqZqK6fBq6kPvUce2oAZcdthSBUsYck4-_FNJ09PdVXQQ.woff2"
 
-#----------------------------#
-#----- Script Functions -----#
-#----------------------------#
+#---------------------------------#
+#----- Script Base Functions -----#
+#---------------------------------#
 
 function die() {
     local scrname=$(basename "$0")
@@ -91,15 +91,7 @@ EOM
 
 #---------------------#
 
-MAINFOLDER=materials
-THEMEFOLDER=custom_theme
-CODELICENSE="MIT"
-TEXTLICENSE="CC-BY-4.0"
-Font_Text="https://fonts.gstatic.com/s/notosans/v27/o-0IIpQlx3QUlC5A4PNr6zRAW_0.woff2"
-Font_Mono="https://fonts.gstatic.com/s/notosansmono/v21/BngrUXNETWXI6LwhGYvaxZikqZqK6fBq6kPvUce2oAZcdthSBUsYck4-_FNJ09PdVXQQ.woff2"
-
-
-#-- parse options --#
+#--- parse options ---#
 while [ -n "$1" ]; do
     case $1 in
       -h | --help   ) printhelp && exit 0 ;;
@@ -115,9 +107,9 @@ while [ -n "$1" ]; do
     esac
 done
 
-#------------------#
-#----- Helper -----#
-#------------------#
+#--------------------------#
+#----- Helper Scripts -----#
+#--------------------------#
 
 Font_Text_extension="${Font_Text##*.}"
 Font_Mono_extension="${Font_Mono##*.}"
@@ -161,17 +153,18 @@ extra_css:
   - css/extra.css
 
 markdown_extensions:
-  - smarty
-  - toc: 
-      baselevel: 1
-      permalink: true
   - admonition
   - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences 
   - attr_list
-  - md_in_html
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
+  - md_in_html
 
 nav:
   - index.md
@@ -373,6 +366,7 @@ function msg_not_empty {
     echo "-- Folder not empty! --------------"
     echo "-- Project outline NOT generate! --"
     echo "-----------------------------------"
+    exit 1
 }
 
 #-----------------------#
@@ -383,6 +377,5 @@ if [ -z "$(ls -A .)" ]; then
     generate_mkdocs_project
 else
     msg_not_empty
-    exit 1
 fi
 
