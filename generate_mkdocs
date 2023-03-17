@@ -15,7 +15,7 @@
 #----- Default Settings -----#
 #----------------------------#
 
-MAINFOLDER=materials
+MAINFOLDER=docs
 THEMEFOLDER=custom_theme
 CODELICENSE="MIT"
 TEXTLICENSE="CC-BY-4.0"
